@@ -15,7 +15,7 @@ MySQL v 8.0.32
 * Edit `.env` to contain your mysql (including database name for testing) and router configurations
 
 #### Install dependencies
-* From root directory, run the command `go get`
+* From root directory, run the command `go get -u -d ./...`
 
 #### Configure mysql database
 * Run mysql locally.
