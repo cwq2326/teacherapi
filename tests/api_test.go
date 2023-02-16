@@ -18,7 +18,7 @@ import (
 
 	"govtech/pkg/controllers"
 	"govtech/pkg/models/request"
-	"govtech/pkg/server/database"
+	"govtech/pkg/server/databases"
 	"govtech/pkg/utilities/messages"
 )
 
@@ -39,7 +39,6 @@ func init() {
 	}
 	dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.User, config.Password,
 		config.Host, config.Port, config.Name)
-	fmt.Println(dsn)
 }
 
 // Run all tests.
@@ -261,7 +260,17 @@ func RetrieveForNotification(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
+	_, err = db.Exec(`INSERT INTO students VALUES ("ishouldnotappear@gmail.com", 1)`)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
 	_, err = db.Exec(`INSERT INTO teaches VALUES ("teacher@gmail.com", "nottagged@gmail.com")`)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	_, err = db.Exec(`INSERT INTO teaches VALUES ("teacher@gmail.com", "ishouldnotappear@gmail.com")`)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -294,7 +303,7 @@ func RetrieveForNotification(t *testing.T) {
 	// Should get status code 200 and "nottagged@gmail.com"
 	payload = request.ReceieveForNotificationsRequest{
 		Teacher:      "teacher@gmail.com",
-		Notification: "hello world @tagged1@gmail.com @tagged2@gmail.com",
+		Notification: "hello world @tagged1@gmail.com @tagged2@gmail.com @tagged1@gmail.com",
 	}
 	jsonValue, _ = json.Marshal(payload)
 	req, _ = http.NewRequest("POST", `/api/retrievefornotifications`, bytes.NewBuffer(jsonValue))
