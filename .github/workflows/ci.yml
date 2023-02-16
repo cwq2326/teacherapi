@@ -21,10 +21,13 @@ jobs:
       with:
         go-version: 1.19
     
-    - name: Test
+    - name: Set up .env
       run: echo ${{ secrets.DB_USER }} > .env &&
-           echo ${{ secrets.DB_HOST }} > .env &&
-           echo ${{ secrets.DB_PASS }} > .env &&
-           echo ${{ secrets.DB_PORT }} > .env &&
-           echo ${{ secrets.DB_TEST_NAME }} > .env &&
-           go test -v ./tests
+           echo ${{ secrets.DB_USER }} > .env &&
+           echo ${{ secrets.DB_USER }} > .env &&
+           echo ${{ secrets.DB_USER }} > .env &&
+           echo ${{ secrets.DB_USER }} > .env &&
+           cat .env
+           
+    - name: Test
+      run: go test -v ./tests
