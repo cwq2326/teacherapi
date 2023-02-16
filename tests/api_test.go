@@ -466,6 +466,62 @@ func Register(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
 	assert.Equal(t, `{"message":"Both fields student and teachers must be present and valid"}`, rr.Body.String())
 
+	// Test for wrong teacher email format.
+	// Should return status code 400 and error response.
+	payload = request.RegisterRequest{
+		Teacher: "wrong@format",
+		Students: []string{"s1@gmail.com", "s2@gmail.com"},
+	}
+	jsonValue, _ = json.Marshal(payload)
+	req, _ = http.NewRequest("POST", `/api/register`, bytes.NewBuffer(jsonValue))
+	rr = httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+	assert.Equal(t, `{"message":"`+messages.INVALID_TEACHER_EMAIL_FORMAT+`"}`, rr.Body.String())
+	// Test for one wrong student email format.
+	// Should return status code 400 and error response.
+	payload = request.RegisterRequest{
+		Teacher: "t1@gmail.com",
+		Students: []string{"wrong@format", "s2@gmail.com"},
+	}
+	jsonValue, _ = json.Marshal(payload)
+	req, _ = http.NewRequest("POST", `/api/register`, bytes.NewBuffer(jsonValue))
+	rr = httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+	assert.Equal(t, `{"message":"`+messages.INVALID_STUDENT_EMAIL_FORMAT+`"}`, rr.Body.String())
+
+	// Test for wrong student email format.
+	// Should return status code 400 and error response.
+	payload = request.RegisterRequest{
+		Student: "wrong.format",
+		Teachers: []string{"t1@gmail.com", "t2@gmail.com"},
+	}
+	jsonValue, _ = json.Marshal(payload)
+	req, _ = http.NewRequest("POST", `/api/register`, bytes.NewBuffer(jsonValue))
+	rr = httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+	assert.Equal(t, `{"message":"`+messages.INVALID_STUDENT_EMAIL_FORMAT+`"}`, rr.Body.String())
+
+	// Test for one wrong teacher email format.
+	// Should return status code 400 and error response.
+	payload = request.RegisterRequest{
+		Student: "s1@gmail.com",
+		Teachers: []string{"t1@gmail.com", "wrongforma.t"},
+	}
+	jsonValue, _ = json.Marshal(payload)
+	req, _ = http.NewRequest("POST", `/api/register`, bytes.NewBuffer(jsonValue))
+	rr = httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+	assert.Equal(t, `{"message":"`+messages.INVALID_TEACHER_EMAIL_FORMAT+`"}`, rr.Body.String())
+
+
 	// Clean up DB.
 	database.CleanupTestDB(db)
 	db.Close()

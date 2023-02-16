@@ -7,12 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 
-	"govtech/pkg/utilities/messages"
 	"govtech/pkg/models/request"
+	"govtech/pkg/utilities/messages"
+	"govtech/pkg/utilities/patterns"
 )
 
 func RegisterRegisterEndpoint(r *gin.Engine, db *sql.DB) {
-	r.POST("/api/register", func(c *gin.Context) { 
+	r.POST("/api/register", func(c *gin.Context) {
 		Register(c, db)
 	})
 }
@@ -30,10 +31,10 @@ func Register(c *gin.Context, db *sql.DB) {
 		bindErr, paramErr := messages.GetErrorMessage(err)
 
 		if bindErr != nil {
-			c.JSON(http.StatusBadGateway, gin.H{"message": 123})
+			c.JSON(http.StatusBadGateway, gin.H{"message": messages.MESSAGE_DATABASE_ERROR})
 			return
 		} else if paramErr != "" {
-			c.JSON(http.StatusBadGateway, gin.H{"message": 123})
+			c.JSON(http.StatusBadGateway, gin.H{"message": messages.MESSAGE_DATABASE_ERROR})
 			return
 		}
 	}
@@ -60,6 +61,21 @@ func Register(c *gin.Context, db *sql.DB) {
 	canAddToTeacher := haveTeacher && haveStudents
 
 	if canAddToTeacher {
+		// Validate email format.
+		validStudentEmail := patterns.ValidatePattern(patterns.REGEX_PATTERN_EMAIL, request.Teacher)
+		if !validStudentEmail {
+			c.JSON(http.StatusBadRequest, gin.H{"message": messages.INVALID_TEACHER_EMAIL_FORMAT})
+			return
+		}
+
+		for _, v := range request.Students {
+			emailFormat := patterns.ValidatePattern(patterns.REGEX_PATTERN_EMAIL, v)
+			if !emailFormat {
+				c.JSON(http.StatusBadRequest, gin.H{"message": messages.INVALID_STUDENT_EMAIL_FORMAT})
+				return
+			}
+		}
+
 		err := insertIntoDB(request.Teacher, request.Students, 1, db)
 
 		if err != nil {
@@ -71,6 +87,21 @@ func Register(c *gin.Context, db *sql.DB) {
 	canAddToStudent := haveStudent && haveTeachers
 
 	if canAddToStudent {
+		// Validate email format.
+		validStudentEmail := patterns.ValidatePattern(patterns.REGEX_PATTERN_EMAIL, request.Student)
+		if !validStudentEmail {
+			c.JSON(http.StatusBadRequest, gin.H{"message": messages.INVALID_STUDENT_EMAIL_FORMAT})
+			return
+		}
+
+		for _, v := range request.Teachers {
+			emailFormat := patterns.ValidatePattern(patterns.REGEX_PATTERN_EMAIL, v)
+			if !emailFormat {
+				c.JSON(http.StatusBadRequest, gin.H{"message": messages.INVALID_TEACHER_EMAIL_FORMAT})
+				return
+			}
+		}
+
 		err := insertIntoDB(request.Student, request.Teachers, 2, db)
 
 		if err != nil {
