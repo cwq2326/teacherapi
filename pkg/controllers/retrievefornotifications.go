@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 
-	"govtech/pkg/utilities/messages"
 	"govtech/pkg/models/request"
-	"govtech/pkg/utilities/set"
+	"govtech/pkg/utilities/messages"
 	"govtech/pkg/utilities/patterns"
+	"govtech/pkg/utilities/set"
 )
 
 func RegisterRetrieveForNotificationEndpoint(r *gin.Engine, db *sql.DB) {
@@ -89,7 +89,6 @@ func ReceiveForNotifications(c *gin.Context, db *sql.DB) {
 	var count int
 	regex := regexp.MustCompile(patterns.REGEX_PATTERN_EMAIL)
 	taggedStudents := regex.FindAllString(request.Notification, -1)
-
 	for _, v := range taggedStudents {
 		err := db.QueryRow(`SELECT COUNT(*)
 							FROM students

@@ -10,8 +10,9 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-const MESSAGE_MISSING_PARAMS = "Missing one or more required parameter(s)"
+const MESSAGE_BAD_REQUEST = "The server could not understand the request due to invalid syntax or missing parameters."
 const MESSAGE_DATABASE_ERROR = "Failed to query database record. Contact the administrator for more information."
+const MESSAGE_MISSING_PARAMS = "Missing one or more required parameter(s)"
 
 // Returns string of missing required query parameters.
 func MissingQueryParamsMessage(parameters []string) string {

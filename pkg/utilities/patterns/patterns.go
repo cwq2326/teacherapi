@@ -4,6 +4,7 @@ import (
 	"regexp"
 )
 
+// Regexp patterns used for validation.
 const REGEX_PATTERN_NOTIFICATION = `^([a-zA-Z0-9_.,!?-]+\s?)*(@[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)*$`
 const REGEX_PATTERN_EMAIL = `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`
 

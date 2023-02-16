@@ -1,5 +1,6 @@
 package request
 
+// Structure for "/api/register" endpoint request body.
 type RegisterRequest struct {
 	Teacher  string   `json:"teacher"`
 	Teachers []string `json:"teachers"`

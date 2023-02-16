@@ -7,7 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"govtech/pkg/server/database"
+	"govtech/pkg/server/databases"
 	"govtech/pkg/server/handlers"
 )
 
@@ -49,5 +49,6 @@ func main() {
 	// Init router.
 	r := handlers.InitRouter()
 	handlers.RegisterEndpoints(r, db)
+	handlers.RegisterMiddlewares(r)
 	handlers.RunRouter(r, &routerConfig)
 }

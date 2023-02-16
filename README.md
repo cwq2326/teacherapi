@@ -33,7 +33,7 @@
 #### Entity Relationship Model
 ![er-model](https://user-images.githubusercontent.com/68064689/219323593-d3a4b07b-d0a0-48ce-bd49-44c616b1f311.png)
 #### Continuous Integration
-CI is perform via GitAction and Microsoft Azure MySQL for test database
+CI is perform via GitHub Actions and Microsoft Azure MySQL for test database
 #### Improvements
 - Implement CD in addition to CI
 - Implement test cases for utilities functions
