@@ -16,12 +16,14 @@ jobs:
       with:
         go-version: 1.19
 
-    - name: Build
-      run: go build ./cmd/main/main.go
+    - name: Build the Go app
+      run: |
+        go get -d -v ./...
+        go build -v -o ./bin/go-app
 
     - name: Deploy to Azure
       uses: Azure/webapps-deploy@v2
       with:
         app-name: cwq2326
-        package: .
+        package: ./bin/go-app
         publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
