@@ -33,11 +33,6 @@ func init() {
 		Port: os.Getenv("ROUTER_PORT"),
 		Host: os.Getenv("ROUTER_HOST"),
 	}
-
-	deployPort := os.Getenv("HTTP_PLATFORM_PORT")
-	if (deployPort != "") {
-		routerConfig.Port = deployPort
-	}
 }
 
 func main() {
