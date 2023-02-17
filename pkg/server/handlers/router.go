@@ -53,13 +53,4 @@ func RegisterMiddlewares(router *gin.Engine, db *sql.DB) {
 	for _, v := range databases {
 		v(router, db)
 	}
-
-	// Register middlewares used for sanitizing user input.
-	// sanitizers := []func(*gin.Engine){
-	// 	middlewares.RegisterSantizerMiddleware,
-	// }
-
-	// for _, v := range sanitizers {
-	// 	v(router)
-	// }
 }

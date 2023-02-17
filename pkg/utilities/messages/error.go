@@ -12,11 +12,11 @@ import (
 
 const MESSAGE_BAD_REQUEST = "The server could not understand the request due to invalid syntax or missing parameters."
 const MESSAGE_DATABASE_ERROR = "Failed to query database record. Contact the administrator for more information."
-const MESSAGE_MISSING_PARAMS = "Missing one or more required parameter(s)"
+const MESSAGE_MISSING_PARAMS = "One or more required query parameter(s) is missing or invalid"
 
 // Returns string of missing required query parameters.
 func MissingQueryParamsMessage(parameters []string) string {
-	output := "Missing one or more required query parameter(s): "
+	output := "One or more required query parameter(s) is missing or invalid: "
 
 	for i, v := range parameters {
 		if i == len(parameters)-1 {
