@@ -18,7 +18,7 @@ import (
 
 	"govtech/pkg/controllers"
 	"govtech/pkg/models/request"
-	database "govtech/pkg/server/databases"
+	"govtech/pkg/server/databases"
 	"govtech/pkg/server/handlers"
 	"govtech/pkg/utilities/messages"
 )
@@ -96,6 +96,9 @@ func Suspend(t *testing.T) {
 	assert.Equal(t, 1, suspended)
 
 	// Negative test cases.
+
+	// Invalid student query param.
+	// Should return status code 400 and error message.
 	payload = request.SuspendRequest{
 		Student: "",
 	}
@@ -312,6 +315,48 @@ func RetrieveForNotification(t *testing.T) {
 	assert.Equal(t, `{"recipient":["nottagged@gmail.com","tagged1@gmail.com","tagged2@gmail.com"]}`, rr.Body.String())
 
 	// Negative cases.
+
+	// Test for wrong teacher field format.
+	// Should get status code 400 and error message.
+	payload = request.ReceieveForNotificationsRequest{
+		Teacher:      "teacher@gmailcom",
+		Notification: "hello world @tagged1@gmail.com @tagged2@gmail.com",
+	}
+	jsonValue, _ = json.Marshal(payload)
+	req, _ = http.NewRequest("POST", `/api/retrievefornotifications`, bytes.NewBuffer(jsonValue))
+	rr = httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	// Test for too long teacher field > 60.
+	// Should get status code 400 and error message.
+	payload = request.ReceieveForNotificationsRequest{
+		Teacher:      "teacherteacherteacherteacherteacherteacherteacherteacherteacher@gmail.com",
+		Notification: "hello world @tagged1@gmail.com @tagged2@gmail.com",
+	}
+	jsonValue, _ = json.Marshal(payload)
+	req, _ = http.NewRequest("POST", `/api/retrievefornotifications`, bytes.NewBuffer(jsonValue))
+	rr = httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+	assert.Equal(t, `{"message":{"`+messages.MESSAGE_MISSING_PARAMS+`":{"teacher":"max=60"}}}`, rr.Body.String())
+
+	// Test for too long notification field > 200.
+	// Should get status code 400 and error message.
+	payload = request.ReceieveForNotificationsRequest{
+		Teacher: "teacher@gmail.com",
+		Notification: `ehelloworldhelloworldhelloworldhelloworldhelloworldhelloworld
+						helloworldhellowhelloworldhelloworldhelloworldhelloworldhello
+						worldhelloworldhelloworldhelloworldhelloworldhelloworldhellowo
+						rldhelloworldvworldhelloworldhelloworld @tagged1@gmail.com @tagged2@gmail.com"`,
+	}
+	jsonValue, _ = json.Marshal(payload)
+	req, _ = http.NewRequest("POST", `/api/retrievefornotifications`, bytes.NewBuffer(jsonValue))
+	rr = httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
+	assert.Equal(t, `{"message":{"`+messages.MESSAGE_MISSING_PARAMS+`":{"notification":"max=200"}}}`, rr.Body.String())
 
 	// Test for missing teacher field.
 	// Should get status code 400 and error message.
