@@ -12,10 +12,8 @@ import (
 	"govtech/pkg/utilities/patterns"
 )
 
-func RegisterRegisterEndpoint(r *gin.Engine, db *sql.DB) {
-	r.POST("/api/register", func(c *gin.Context) {
-		Register(c, db)
-	})
+func RegisterRegisterEndpoint(r *gin.Engine) {
+	r.POST("/api/register", Register)
 }
 
 /*
@@ -23,8 +21,9 @@ This function handles a POST request to the "/api/register" endpoint.
 It can either register a list of students to a teacher or
 a list of teachers to a student.
 */
-func Register(c *gin.Context, db *sql.DB) {
+func Register(c *gin.Context) {
 	var request request.RegisterRequest
+	db := c.MustGet("db").(*sql.DB)
 
 	// Return error response if missing or invalid request body fields.
 	if err := c.ShouldBindJSON(&request); err != nil {

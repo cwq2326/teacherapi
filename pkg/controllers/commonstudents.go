@@ -11,18 +11,17 @@ import (
 	"govtech/pkg/utilities/messages"
 )
 
-func RegisterCommonStudentsEndpoint(r *gin.Engine, db *sql.DB) {
-	r.GET("/api/commonstudents", func(c *gin.Context) {
-		CommonStudents(c, db)
-	})
+func RegisterCommonStudentsEndpoint(r *gin.Engine) {
+	r.GET("/api/commonstudents", CommonStudents)
 }
 
 /*
 This function handles a GET request to the "/api/commonstudents" endpoint.
 It returns all students common to a given list of teachers.
 */
-func CommonStudents(c *gin.Context, db *sql.DB) {
+func CommonStudents(c *gin.Context) {
 	teachers := c.QueryArray("teacher")
+	db := c.MustGet("db").(*sql.DB)
 
 	// Return error reponse if no "teacher" query parameter is given.
 	if len(teachers) == 0 {
@@ -64,6 +63,6 @@ func CommonStudents(c *gin.Context, db *sql.DB) {
 		students = append(students, student)
 	}
 	sort.Strings(students)
-	
+
 	c.JSON(http.StatusOK, gin.H{"students": students})
 }

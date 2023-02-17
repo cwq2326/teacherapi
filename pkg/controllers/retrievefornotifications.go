@@ -15,10 +15,8 @@ import (
 	"govtech/pkg/utilities/set"
 )
 
-func RegisterRetrieveForNotificationEndpoint(r *gin.Engine, db *sql.DB) {
-	r.POST("/api/retrievefornotifications", func (c *gin.Context) {
-		ReceiveForNotifications(c, db)
-	})
+func RegisterRetrieveForNotificationEndpoint(r *gin.Engine) {
+	r.POST("/api/retrievefornotifications", RetrieveForNotifications)
 }
 
 /*
@@ -28,8 +26,9 @@ A student can receive a notification if he is not suspended and is registered to
 or is mentioned in the notification.
 */
 
-func ReceiveForNotifications(c *gin.Context, db *sql.DB) {
+func RetrieveForNotifications(c *gin.Context) {
 	var request request.ReceieveForNotificationsRequest
+	db := c.MustGet("db").(*sql.DB)
 
 	// Return error response if missing or invalid request body fields.
 	if err := c.ShouldBindJSON(&request); err != nil {

@@ -7,23 +7,21 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 
-	"govtech/pkg/utilities/messages"
 	"govtech/pkg/models/request"
+	"govtech/pkg/utilities/messages"
 )
 
-func RegisterSuspendEndpoint(r *gin.Engine, db *sql.DB) {
-	r.POST("/api/suspend", func (c *gin.Context) {
-		Suspend(c, db)
-	})
+func RegisterSuspendEndpoint(r *gin.Engine) {
+	r.POST("/api/suspend", Suspend)
 }
-
 
 /*
 This function handles a POST request to the "/api/suspend" endpoint.
 It suspends the specified student.
 */
-func Suspend(c *gin.Context, db *sql.DB) {
+func Suspend(c *gin.Context) {
 	var request request.SuspendRequest
+	db := c.MustGet("db").(*sql.DB)
 
 	// Return error response if missing or invalid request body fields.
 	if err := c.ShouldBindJSON(&request); err != nil {

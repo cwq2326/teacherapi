@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 
-	"govtech/pkg/server/databases"
+	database "govtech/pkg/server/databases"
 	"govtech/pkg/server/handlers"
 )
 
@@ -43,7 +43,9 @@ func main() {
 
 	// Init router.
 	r := handlers.InitRouter()
+
+	handlers.RegisterMiddlewares(r, db)
 	handlers.RegisterEndpoints(r, db)
-	handlers.RegisterMiddlewares(r)
+
 	handlers.RunRouter(r, &routerConfig)
 }

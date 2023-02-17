@@ -18,7 +18,8 @@ import (
 
 	"govtech/pkg/controllers"
 	"govtech/pkg/models/request"
-	"govtech/pkg/server/databases"
+	database "govtech/pkg/server/databases"
+	"govtech/pkg/server/handlers"
 	"govtech/pkg/utilities/messages"
 )
 
@@ -64,11 +65,10 @@ func Suspend(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	// Init router.
+	// Init router and middlewares.
 	r := gin.Default()
-	r.POST("/api/suspend", func(c *gin.Context) {
-		controllers.Suspend(c, db)
-	})
+	handlers.RegisterMiddlewares(r, db)
+	r.POST("/api/suspend", controllers.Suspend)
 
 	// Test for POST.
 
@@ -168,11 +168,10 @@ func CommonStudents(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	// Init router.
+	// Init router and middleware.
 	r := gin.Default()
-	r.GET("/api/commonstudents", func(c *gin.Context) {
-		controllers.CommonStudents(c, db)
-	})
+	handlers.RegisterMiddlewares(r, db)
+	r.GET("/api/commonstudents", controllers.CommonStudents)
 
 	// Test for GET.
 
@@ -275,11 +274,10 @@ func RetrieveForNotification(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	// Init router.
+	// Init router and middleware.
 	r := gin.Default()
-	r.POST("/api/retrievefornotifications", func(c *gin.Context) {
-		controllers.ReceiveForNotifications(c, db)
-	})
+	handlers.RegisterMiddlewares(r, db)
+	r.POST("/api/retrievefornotifications", controllers.RetrieveForNotifications)
 
 	// Test for POST.
 
@@ -370,11 +368,10 @@ func Register(t *testing.T) {
 	defer db.Close()
 	database.InitTestDB(db)
 
-	// Init router.
+	// Init router and middleware.
 	r := gin.Default()
-	r.POST("/api/register", func(c *gin.Context) {
-		controllers.Register(c, db)
-	})
+	handlers.RegisterMiddlewares(r, db)
+	r.POST("/api/register", controllers.Register)
 
 	// Test for POST request.
 
@@ -478,7 +475,7 @@ func Register(t *testing.T) {
 	// Test for wrong teacher email format.
 	// Should return status code 400 and error response.
 	payload = request.RegisterRequest{
-		Teacher: "wrong@format",
+		Teacher:  "wrong@format",
 		Students: []string{"s1@gmail.com", "s2@gmail.com"},
 	}
 	jsonValue, _ = json.Marshal(payload)
@@ -491,7 +488,7 @@ func Register(t *testing.T) {
 	// Test for one wrong student email format.
 	// Should return status code 400 and error response.
 	payload = request.RegisterRequest{
-		Teacher: "t1@gmail.com",
+		Teacher:  "t1@gmail.com",
 		Students: []string{"wrong@format", "s2@gmail.com"},
 	}
 	jsonValue, _ = json.Marshal(payload)
@@ -505,7 +502,7 @@ func Register(t *testing.T) {
 	// Test for wrong student email format.
 	// Should return status code 400 and error response.
 	payload = request.RegisterRequest{
-		Student: "wrong.format",
+		Student:  "wrong.format",
 		Teachers: []string{"t1@gmail.com", "t2@gmail.com"},
 	}
 	jsonValue, _ = json.Marshal(payload)
@@ -519,7 +516,7 @@ func Register(t *testing.T) {
 	// Test for one wrong teacher email format.
 	// Should return status code 400 and error response.
 	payload = request.RegisterRequest{
-		Student: "s1@gmail.com",
+		Student:  "s1@gmail.com",
 		Teachers: []string{"t1@gmail.com", "wrongforma.t"},
 	}
 	jsonValue, _ = json.Marshal(payload)
@@ -529,7 +526,6 @@ func Register(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
 	assert.Equal(t, `{"message":"`+messages.INVALID_TEACHER_EMAIL_FORMAT+`"}`, rr.Body.String())
-
 
 	// Clean up DB.
 	database.CleanupTestDB(db)

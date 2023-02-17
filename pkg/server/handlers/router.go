@@ -30,26 +30,36 @@ func RunRouter(router *gin.Engine, config *RouterConfig) {
 
 // Register endpoints to the router.
 func RegisterEndpoints(router *gin.Engine, db *sql.DB) {
-	endpointRegistrations := []func(*gin.Engine, *sql.DB) {
+	endpointRegistrations := []func(*gin.Engine){
 		controllers.RegisterCommonStudentsEndpoint,
 		controllers.RegisterRegisterEndpoint,
 		controllers.RegisterRetrieveForNotificationEndpoint,
 		controllers.RegisterSuspendEndpoint,
 	}
 
-	for _,v := range endpointRegistrations {
-		v(router, db)
+	for _, v := range endpointRegistrations {
+		v(router)
 	}
 }
 
-
 // Register middlewares to the router.
-func RegisterMiddlewares(router *gin.Engine) {
-	middlewares := []func(*gin.Engine) {
-		middlewares.RegisterSantizerMiddleware,
+func RegisterMiddlewares(router *gin.Engine, db *sql.DB) {
+
+	// Register middlewares used for DB.
+	databases := []func(*gin.Engine, *sql.DB){
+		middlewares.RegisterDatabaseMiddleware,
 	}
 
-	for _,v := range middlewares {
-		v(router)
+	for _, v := range databases {
+		v(router, db)
 	}
+
+	// Register middlewares used for sanitizing user input.
+	// sanitizers := []func(*gin.Engine){
+	// 	middlewares.RegisterSantizerMiddleware,
+	// }
+
+	// for _, v := range sanitizers {
+	// 	v(router)
+	// }
 }
