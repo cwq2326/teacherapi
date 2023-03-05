@@ -228,7 +228,7 @@ An example of an error response<br>
 
 | Name | Type | In | Required | Description |
 | ---  | ---  | -- | -------- | ----------- |
-| teacher | string | Query | false | Email of the teacher |
+| teacher | string | Query | true | Email of the teacher |
 
 #### Implementation details
 * Checks for query parameters using `gin.Context.QueryArray("teacher")`
