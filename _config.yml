@@ -1,0 +1,12 @@
+title: "GovTech Division Tech Assessment"
+theme: minima
+
+header_pages:
+  - index.md
+
+markdown: kramdown
+
+github_icon: "images/github-icon.png"
+
+plugins:
+  - jemoji
