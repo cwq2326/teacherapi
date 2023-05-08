@@ -1,4 +1,5 @@
 ## Golang Assessment for Division Tech Assessment (GDS / DCube)
+👉 [Dev Notes](https://cwq2326.github.io/teacherapi/)
 ### Name: Chua Wen Quan
 ```
 Go v1.20
